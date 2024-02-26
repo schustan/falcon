@@ -38,7 +38,7 @@ option(ENABLE_TIDY     "Enable clang tidy"                        OFF)
 
 #option(USE_LTE_RATES   "Use standard LTE sampling rates"          OFF)
 
-set(GCC_ARCH native CACHE STRING "GCC compile for specific architecture.")
+set(GCC_ARCH corei7 CACHE STRING "GCC compile for specific architecture.")
 
 ###########################################################################
 
@@ -282,24 +282,24 @@ if(CMAKE_C_COMPILER_ID MATCHES "GNU" OR CMAKE_C_COMPILER_ID MATCHES "Clang")
   endif (USE_LTE_RATES)
 
   #find_package(SSE)	# moved upwards before BUILD_TYPE-specific flags. -> AVX512 detection/test code gets subject of O3 optimization -> reports availability even if not present
-  if (HAVE_AVX2)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfpmath=sse -mavx2 -DLV_HAVE_AVX2 -DLV_HAVE_AVX -DLV_HAVE_SSE")
-  else (HAVE_AVX2)
-    if(HAVE_AVX)
-      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfpmath=sse -mavx -DLV_HAVE_AVX -DLV_HAVE_SSE")
-    elseif(HAVE_SSE)
+#  if (HAVE_AVX2)
+#    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfpmath=sse -mavx2 -DLV_HAVE_AVX2 -DLV_HAVE_AVX -DLV_HAVE_SSE")
+#  else (HAVE_AVX2)
+#    if(HAVE_AVX)
+#      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfpmath=sse -mavx -DLV_HAVE_AVX -DLV_HAVE_SSE")
+#    elseif(HAVE_SSE)
       set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfpmath=sse -msse4.1 -DLV_HAVE_SSE")
-    endif(HAVE_AVX)
-  endif (HAVE_AVX2)
+#    endif(HAVE_AVX)
+#  endif (HAVE_AVX2)
 
   if (HAVE_FMA)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfma -DLV_HAVE_FMA")
   endif (HAVE_FMA)
 
-  if (HAVE_AVX512)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mavx512f -mavx512cd -DLV_HAVE_AVX512")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx512f -mavx512cd -DLV_HAVE_AVX512")
-  endif(HAVE_AVX512)
+#  if (HAVE_AVX512)
+#    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mavx512f -mavx512cd -DLV_HAVE_AVX512")
+#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx512f -mavx512cd -DLV_HAVE_AVX512")
+#  endif(HAVE_AVX512)
 
   if(NOT ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     if(HAVE_SSE)
