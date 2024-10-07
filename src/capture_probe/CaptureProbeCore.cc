@@ -157,7 +157,7 @@ bool CaptureProbeCore::run() {
     sleep(backoff);
   }
 
-  if(!modem->setOnline(true)) {
+  if(modem->setOnline(true)) {
     *netsync << "Could not establish data connection via aux modem" << endl;
     return true;
   }
@@ -168,6 +168,7 @@ bool CaptureProbeCore::run() {
   }
 
   string operatorName = modem->getOperatorName();
+  *netsync << "Found operator: " << operatorName << "\n";
   string fileSinkFileName(args.output_file_base_name + "-" + operatorName + "-iq.bin");
   string trafficResultsFileName(args.output_file_base_name + "-" + operatorName + "-traffic.csv");
   string cellInfoFileName(args.output_file_base_name + "-" + operatorName + "-cell.csv");

@@ -270,18 +270,22 @@ int is_online_modem(modem_t* m) {
 }
 
 int _set_online_modem(modem_t* m, int value) {
+  printf("Setting modem online status... ");
   int state = _is_online_modem(m);
   if((value != 0 && state != 0) || (value == 0 && state == 0)) {
     // state already equals to value
+    printf("already correct status :)\n");
     return 1;
   }
   else {
     // change state
     sw_response_t ret;
     if(value) {
+      printf("online\n");
       ret = sw_em7565_set_data_connection(m->modem, DATA_CONNECTION_STATUS_ENABLED);
     }
     else {
+      printf("offline\n");
       ret = sw_em7565_set_data_connection(m->modem, DATA_CONNECTION_STATUS_DISABLED);
     }
 
@@ -296,9 +300,11 @@ int _set_online_modem(modem_t* m, int value) {
 }
 
 int set_online_modem(modem_t* m, int value) {
+  printf("Changing aux modem online status... ");
   pthread_mutex_lock(&m->mutex);
   int int_ret = _set_online_modem(m, value);
   pthread_mutex_unlock(&m->mutex);
+  printf("done! ret: %d\n",int_ret);
   return int_ret;
 }
 

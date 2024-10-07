@@ -46,10 +46,11 @@ string AuxModem::getOperatorNameLUT(int mccX100mnc) {
     case 26202:
       return "Vodafone";
     case 26203:
+      return "O2-DENEW";
     case 26207:
-      return "O2-DE___";
+      return "O2-DEOLD";
     default:
-      return "";
+      return "UNKNWNOP";
   }
 }
 

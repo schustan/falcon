@@ -282,14 +282,15 @@ if(CMAKE_C_COMPILER_ID MATCHES "GNU" OR CMAKE_C_COMPILER_ID MATCHES "Clang")
   endif (USE_LTE_RATES)
 
   #find_package(SSE)	# moved upwards before BUILD_TYPE-specific flags. -> AVX512 detection/test code gets subject of O3 optimization -> reports availability even if not present
+
 #  if (HAVE_AVX2)
 #    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfpmath=sse -mavx2 -DLV_HAVE_AVX2 -DLV_HAVE_AVX -DLV_HAVE_SSE")
 #  else (HAVE_AVX2)
-#    if(HAVE_AVX)
-#      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfpmath=sse -mavx -DLV_HAVE_AVX -DLV_HAVE_SSE")
-#    elseif(HAVE_SSE)
+    if(HAVE_AVX)
+      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfpmath=sse -mavx -DLV_HAVE_AVX -DLV_HAVE_SSE")
+    elseif(HAVE_SSE)
       set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfpmath=sse -msse4.1 -DLV_HAVE_SSE")
-#    endif(HAVE_AVX)
+    endif(HAVE_AVX)
 #  endif (HAVE_AVX2)
 
   if (HAVE_FMA)
