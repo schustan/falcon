@@ -7,17 +7,17 @@
 
 find_path(MKL_INCLUDE_DIR
             NAMES mkl.h
-            HINTS $ENV{MKL_DIR}/include
+            HINTS $ENV{MKL_DIR}/include /usr/include/mkl
             PATHS)
 
 find_path(MKL_FFTW_INCLUDE_DIR
             NAMES fftw3.h
-            HINTS $ENV{MKL_DIR}/include/fftw
+            HINTS $ENV{MKL_DIR}/include/fftw /usr/include/fftw3
             PATHS)
 
 find_library(MKL_LIBRARIES
             NAMES mkl_rt
-            HINTS $ENV{MKL_DIR}/lib/intel64
+            HINTS $ENV{MKL_DIR}/lib/intel64 
             PATHS)
 
 find_library(MKL_CORE
