@@ -3,9 +3,9 @@ cmake_minimum_required (VERSION 2.8.11)
 #######################################################################
 #   INSTALL TARGET for make install
 #######################################################################
-#SET(CMAKE_INSTALL_PREFIX /usr/local)
+SET(CMAKE_INSTALL_PREFIX /usr/local)
 
-#message("CIP = ${CMAKE_INSTALL_PREFIX} (should be /usr/local")
+message("CIP = ${CMAKE_INSTALL_PREFIX} (should be /usr/local")
 project (Falcon)
 
 #set (CMAKE_INSTALL_PREFIX /usr/local)
@@ -38,7 +38,12 @@ option(ENABLE_TIDY     "Enable clang tidy"                        OFF)
 
 #option(USE_LTE_RATES   "Use standard LTE sampling rates"          OFF)
 
-set(GCC_ARCH corei7 CACHE STRING "GCC compile for specific architecture.")
+
+if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64")
+ set(GCC_ARCH native CACHE STRING "GCC compile for specific architecture.")
+else(${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64")
+ set(GCC_ARCH corei7 CACHE STRING "GCC compile for specific architecture.")
+endif(${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64")
 
 ###########################################################################
 
@@ -150,7 +155,13 @@ if(ENABLE_BLADERF)
   endif(BLADERF_FOUND)
 endif(ENABLE_BLADERF)
 
+
 # Soapy
+
+# apparently, this needs to be always included for some type header
+# our code base sucks
+include_directories(${SOAPYSDR_INCLUDE_DIRS})
+
 if(ENABLE_SOAPYSDR)
   find_package(SoapySDR)
   if(SOAPYSDR_FOUND)
@@ -158,6 +169,8 @@ if(ENABLE_SOAPYSDR)
     link_directories(${SOAPYSDR_LIBRARY_DIRS})
   endif(SOAPYSDR_FOUND)
 endif(ENABLE_SOAPYSDR)
+
+
 
 if(BLADERF_FOUND OR UHD_FOUND OR SOAPYSDR_FOUND)
   set(RF_FOUND TRUE CACHE INTERNAL "RF frontend found")
@@ -184,6 +197,7 @@ else(SRSLTE_FOUND AND NOT FORCE_SUBPROJECT_SRSLTE)
   include_directories("${CMAKE_BINARY_DIR}/srsLTE-build/lib/include")
   include_directories("${CMAKE_BINARY_DIR}/srsLTE-src/lib/include")
   include_directories("${CMAKE_BINARY_DIR}/srsLTE-src/")
+  include_directories("${CMAKE_BINARY_DIR}/../src/sse2neon/")
   # let the compiler find included files from subdirectories
   include_directories(".")
 
@@ -288,7 +302,7 @@ if(CMAKE_C_COMPILER_ID MATCHES "GNU" OR CMAKE_C_COMPILER_ID MATCHES "Clang")
 #    if(HAVE_AVX)
 #      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfpmath=sse -mavx -DLV_HAVE_AVX -DLV_HAVE_SSE")
 #    elseif(HAVE_SSE)
-      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfpmath=sse -msse4.1 -DLV_HAVE_SSE")
+#      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfpmath=sse -msse4.1 -DLV_HAVE_SSE")
 #    endif(HAVE_AVX)
 #  endif (HAVE_AVX2)
 
@@ -307,14 +321,14 @@ if(CMAKE_C_COMPILER_ID MATCHES "GNU" OR CMAKE_C_COMPILER_ID MATCHES "Clang")
     endif(HAVE_SSE)
   endif(NOT ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 
-  if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm")
+  if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64")
 
-    set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -mfpu=neon -march=native -DIS_ARM -DHAVE_NEON")
+    set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -march=native -DIS_ARM -DHAVE_NEON")
     message(STATUS "have ARM")
     set(HAVE_NEON "True")
-  else(${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm")
+  else(${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64")
     set(HAVE_NEON "False")
-  endif(${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm")
+  endif(${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64")
   set(CMAKE_REQUIRED_FLAGS ${CMAKE_C_FLAGS})
 
   if(NOT HAVE_SSE AND NOT HAVE_NEON AND NOT DISABLE_SIMD)
