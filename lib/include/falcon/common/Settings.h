@@ -26,7 +26,7 @@
 
 // network settings
 #define DEFAULT_PROBING_URL_UPLINK    "http://129.217.211.19:6137/index.html"
-#define DEFAULT_PROBING_URL_DOWNLINK  "http://129.217.211.19:6137/testfiles/100MB.bin"
+#define DEFAULT_PROBING_URL_DOWNLINK  "http://speedtest.belwue.net/random-100M"
 
 #define DEFAULT_NETSYNC_PORT  4567
 
